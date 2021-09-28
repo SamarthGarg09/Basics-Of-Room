@@ -11,8 +11,8 @@ import com.example.busschedule.database.schedule.ScheduleDao
 abstract class AppDatabase():RoomDatabase() {
     abstract fun scheduleDao():ScheduleDao
     companion object{
-        private fun getDatabse(context: Context):AppDatabase{
-            var INSTANCE:AppDatabase? = null
+        private var INSTANCE:AppDatabase? = null
+         fun getDatabase(context: Context):AppDatabase{
             return INSTANCE?: synchronized(this){
                 val instance = Room.databaseBuilder(
                     context,

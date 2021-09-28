@@ -21,12 +21,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.busschedule.databinding.StopScheduleFragmentBinding
 import com.example.busschedule.viewmodel.BusScheduleViewModel
 import com.example.busschedule.viewmodel.BusScheduleViewModelFactory
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class StopScheduleFragment: Fragment() {
 
@@ -60,11 +63,16 @@ class StopScheduleFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = StopScheduleFragmentBinding.inflate(inflater, container, false)
-        val recyclerView = binding.recyclerView
+        recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         val stopScheduleAdapter = BusStopAdapter {}
         recyclerView.adapter = stopScheduleAdapter
-        stopScheduleAdapter.submitList(viewModel.scheduleFromStopName(stopName))
+//        stopScheduleAdapter.submitList(viewModel.scheduleFromStopName(stopName))
+        lifecycle.coroutineScope.launch {
+            viewModel.scheduleFromStopName(stopName).collect {
+                stopScheduleAdapter.submitList(it)
+            }
+        }
         return binding.root
     }
 
